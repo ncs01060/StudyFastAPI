@@ -1,7 +1,7 @@
 ## 가상환경
 
 ```bash
-python3 -m venv pythonDiscordVenv
+python3 -m venv pythonFastAPIVenv
 source pythonWebVenv/bin/activate
 
 # 가상환경 나가기
