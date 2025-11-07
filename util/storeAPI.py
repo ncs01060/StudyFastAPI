@@ -5,7 +5,6 @@ import hashlib
 
 class userDataBase:
     def __init__(self):
-        self.textdb = sqlite3.connect("./util/db/userText.db")
         self.userdb = sqlite3.connect("./util/db/userData.db")
         self.logger = logging.getLogger("util.storeAPI")
         self.logger.setLevel(logging.INFO)
@@ -41,6 +40,7 @@ class userDataBase:
         cur.execute("SELECT uuid FROM User WHERE name=? AND password=?;", (name, hashlib.sha256(pwd.encode()).hexdigest()))
 
         result = cur.fetchone()
+        
         if result:
             self.logger.info(f"User '{name}' logged in with UUID {list(result)[0]}")
             return {"success": True, "uuid": list(result)[0]}
