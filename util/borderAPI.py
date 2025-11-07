@@ -29,6 +29,12 @@ class BorderAPI:
         "viwer number," \
         "mainText text," \
         "borderUID text);")
+
+        cur.execute("CREATE TABLE IF NOT EXISTS Likes (id INTEGER PRIMARY KEY AUTOINCREMENT," \
+        "userUUID TEXT," \
+        "borderUID TEXT," \
+        "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP," \
+        "UNIQUE(userUUID, borderUID));")
     
     def writeBorder(self, data:baseType.BorderType):
         cur = self.borderDB.cursor()
@@ -45,3 +51,32 @@ class BorderAPI:
         self.borderDB.commit()
         self.logger.info(f"{uuid} 게시글이 삭제되었습니다.")
         return {True}
+    
+    def addLike(self, user_uuid: str, border_uid: str):
+        cur = self.borderDB.cursor()
+        try:
+            cur.execute("INSERT INTO Likes (userUUID, borderUID) VALUES (?, ?)", (user_uuid, border_uid))
+            self.borderDB.commit()
+            self.logger.info(f"{user_uuid} liked {border_uid}")
+            return {"success": True}
+        except sqlite3.IntegrityError:
+            # 이미 좋아요를 누른 경우
+            cur.execute("DELETE FROM Likes WHERE userUUID=? AND borderUID=?", (user_uuid, border_uid))
+            self.borderDB.commit()
+            self.logger.info(f"{user_uuid} unliked {border_uid}")
+            return {"success": False, "message": "unliked"}
+        
+    def addLikeCheck(self,user_uuid:str, border_uid:str):
+        cur = self.borderDB.cursor()
+        cur.execute("SELECT ? FROM Likes WHERE borderUID=?",(user_uuid, border_uid,))
+        result = cur.fetchone()
+        if result:
+            return True
+        else:
+            return False
+    
+    def getLikeCount(self, border_uid: str):
+        cur = self.borderDB.cursor()
+        cur.execute("SELECT COUNT(*) FROM Likes WHERE borderUID=?", (border_uid,))
+        count = cur.fetchone()[0]
+        return count

@@ -36,4 +36,20 @@ def writeBorder(data:mainType.BorderType):
 def deleteBorder(uid:str):
     db = BorderAPI()
     db.deleteBorder(uid)
+
+@app.get("/getLike/")
+def getLike(uid:str):
+    db = BorderAPI()
+    return db.getLikeCount(uid)
+
+@app.get("/addLike")
+def addLike(user_uid:str, border_uid:str):
+    db = BorderAPI()
+    return db.addLike(user_uid,border_uid)
+
+@app.get("/addLikeCheck/")
+def addLikeCheck(user_uid:str,border_uid:str):
+    db = BorderAPI()
+    return db.addLikeCheck(user_uid,border_uid)
+
 # python3 -m uvicorn main:app --reload --port 5050
