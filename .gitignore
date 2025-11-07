@@ -1,3 +1,5 @@
 pythonWebVenv/
 .env
 util/db/
+log/
+test.py
